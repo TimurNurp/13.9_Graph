@@ -67,6 +67,7 @@ void Graph::findFriends(const std::string& name, const int& leigth)
 		}
 
 	int* queue_to_visit = new int[SIZE] {}; // очередь вершин для обхода
+	
 	int queueCount = 0;
 
 	bool* visited = new bool[SIZE] {}; // список посещенных вершин
@@ -74,15 +75,17 @@ void Graph::findFriends(const std::string& name, const int& leigth)
 	for (int i = 0; i < SIZE; i++)
 		visited[i] = false;
 
-	int chainsVertex = leigth; //количество друзей
+	int* arrContact = new int[leigth]{};  // количество друзей на каждом круге рукопожатий
+	int handshake = leigth - 1 ; // количество кругов рукопожатий
+	int subcycle = 0; // счетчик циклов в одном круге
 
-	queue_to_visit[queueCount++] = start; // кладем в очередь начальную вершину
+	queue_to_visit[queueCount++] = start ; // кладем в очередь начальную вершину
 
 	while (queueCount > 0)
 	{
 		// взятие из очереди вершины
 		int current = queue_to_visit[0];
-
+		
 		//сдвиг очереди на 1 влево
 		for (int i = 0; i < queueCount; i++) {
 			queue_to_visit[i] = queue_to_visit[i + 1];
@@ -94,29 +97,44 @@ void Graph::findFriends(const std::string& name, const int& leigth)
 		visited[current] = true;
 
 		std::cout << vertexes[current].getName() << " -> ";
+			
+		if ( (arrContact[0] == 0 || handshake > 0))
+			// поиск смежных вершин и добавление их в очередь
+			for (int i = 0; i < SIZE; i++)
+			{
+				bool alreadyAdded = false;
+				for (int j = 0; j < queueCount; j++) // просмотр очереди и исключение добавленных вершин
+					if (queue_to_visit[j] == i) {
+						alreadyAdded = true;
+						break;
+					}
 
-
-		// поиск смежных вершин и добавление их в очередь
-		if(chainsVertex  > 0) 
-		for (int i = 0; i < SIZE; i++)
+				 // перебор ребер вершины
+					if ((!alreadyAdded) && (!visited[i]) && isFreinds(current, i)) {
+						queue_to_visit[queueCount] = i;
+						++queueCount;
+						
+						if(subcycle == 0) {
+							arrContact[handshake] += 1;
+						}
+						else{
+							arrContact[handshake-1] += 1;
+						}
+						
+						
+					}
+			}
+	
+		
+		if (arrContact[handshake] <= subcycle)//
 		{
-			bool alreadyAdded = false;
-			for (int j = 0; j < queueCount; j++) // просмотр очереди и исключение добавленных вершин
-				if (queue_to_visit[j] == i) {
-					alreadyAdded = true;
-					break;
-				}
-
-			 // перебор ребер вершины
-				if ((!alreadyAdded) && (!visited[i]) && isFreinds(current, i)) {
-					queue_to_visit[queueCount] = i;
-					++queueCount;
-				}
+			--handshake;
+			subcycle = 0;
 		}
-		--chainsVertex;
-	}
-	std::cout << std::endl;
 
+		++subcycle;
+
+	}
 
 	delete[] queue_to_visit;
 	delete[] visited;

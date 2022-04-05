@@ -11,10 +11,10 @@ int main()
 {
     Graph graph;
     std::string names[] = { "Artem", "Anna", "Alex", "Sergey", "Roma", "Ivan", "Nik", "Anastasia", "Stas", "Vika", "Valeria", "Ksenia", "Dmidtry", "Anton", "Nata"};
-
+    
     int countNames = sizeof(names) / sizeof(names[0]);
 
-    //заполняем граф вершинами равными количесву индексов массива имен
+    //заполняем граф вершинами равными количеству индексов массива имен
     for (int i = 0; i < countNames; i++)
         graph.addVertex(names[i]);
    
@@ -29,7 +29,8 @@ int main()
         else
             graph.addEdge(names[random1], names[random2]);
     }
-
+    
+    //вывод заполненного графа
     for (int i = 0; i < graph.vertexCount; i++) {
         std::cout << "name: \t" << graph.getVertex(i) << std::endl;
         std::cout << "friends: " ;
@@ -37,12 +38,9 @@ int main()
             std::cout << graph.getEdge(i, j) << " ; ";
         std::cout << '\n' << std::endl;
     }
-    int x = 2;
-    int y = 3;
+
     graph.findFriends(graph.getVertex(4), 3);
-    std::cout << std::endl;
-    std::cout << graph.getEdge(x, y);
-    //graph.findFriends(graph.getVertex(4), 3);
+
 
     return 0;
 }
